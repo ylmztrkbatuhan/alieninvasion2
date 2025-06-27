@@ -1,10 +1,9 @@
 import sys
 import pygame
-from pygame.sprite import Sprite
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
-
+from pygame.sprite import Sprite
 
 class AlienInvasion:
     """Overall class to manage game assets and behavior."""
@@ -29,7 +28,7 @@ class AlienInvasion:
         while True:
             self._check_events()
             self.ship.update()
-            self._update_bullets()  # Call method to update bullet positions and remove old bullets
+            self.bullets.update()  # Call method to update bullet positions and remove old bullets
             self._update_screen()
 
     def _check_events(self):
@@ -60,6 +59,20 @@ class AlienInvasion:
         new_bullet = Bullet(self)
         self.bullets.add(new_bullet)
 
+    def _update_screen(self):
+        """Update images on the screen, and flip to the new screen."""
+        # Redraw the screen during each pass through the loop.
+        self.screen.fill(self.settings.bg_color)
+        self.ship.blitme()
+
+        # Draw all bullets
+        for bullet in self.bullets.sprites():
+            bullet.draw_bullet()
+
+        # Make the most recently drawn screen visible.
+        # This should be called only once per frame after all drawing operations.
+        pygame.display.flip()
+
     def _check_keyup_events(self, event):
         """Respond to key releases."""
         if event.key == pygame.K_RIGHT:
@@ -79,19 +92,7 @@ class AlienInvasion:
                 self.bullets.remove(bullet)
 
 
-    def _update_screen(self):
-        """Update images on the screen, and flip to the new screen."""
-        # Redraw the screen during each pass through the loop.
-        self.screen.fill(self.settings.bg_color)
-        self.ship.blitme()
 
-        # Draw all bullets
-        for bullet in self.bullets.sprites():
-            bullet.draw_bullet()
-
-        # Make the most recently drawn screen visible.
-        # This should be called only once per frame after all drawing operations.
-        pygame.display.flip()
 
 
 if __name__ == "__main__":
